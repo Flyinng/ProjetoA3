@@ -42,7 +42,7 @@ public class Ordenar {
             merge(numeros, left, right);
         }
     }
-
+    
     private static void merge(List<String> numeros, List<String> left, List<String> right) {
         int leftIndex = 0, rightIndex = 0, mainIndex = 0;
 

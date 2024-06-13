@@ -47,8 +47,6 @@ public class BoasVindasGUI extends JFrame {
         welcomePanel.add(startButton);
 
         add(welcomePanel, BorderLayout.CENTER);
-
-        // Calculate the maximum number of lines in the file
         maxLines = calcularMaxLinhas(nomeArquivo);
         maxLabel.setText("Máximo de linhas disponíveis: " + maxLines);
     }
@@ -71,7 +69,6 @@ public class BoasVindasGUI extends JFrame {
             try {
                 int numLinhas = Integer.parseInt(numberField.getText());
                 if (numLinhas > 0 && numLinhas <= maxLines) {
-                    // Start the main application
                     SwingUtilities.invokeLater(() -> {
                         AppGUI app = new AppGUI(numLinhas);
                         app.setVisible(true);
