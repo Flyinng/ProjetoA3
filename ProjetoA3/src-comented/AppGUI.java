@@ -23,24 +23,29 @@ public class AppGUI extends JFrame {
         this.numLinhas = numLinhas;
         this.dbConnection = new DatabaseConnection();
         
+        // Configurações básicas da janela principal
         setTitle("Ordenar Números");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     
+        // Configura JTextArea para mostrar os números
         textArea = new JTextArea();
         textArea.setEditable(false);
     
         JScrollPane scrollPane = new JScrollPane(textArea);
-        add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER); // Adiciona JTextArea com JScrollPane ao JFrame
     
+        // Painel para os botões de ordenação
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(2, 5));
     
+        // Botão para recarregar lista
         JButton reloadButton = new JButton("Recarregar Lista");
         reloadButton.addActionListener(e -> updateTextArea(formatarNumeros(lerArquivo(nomeArquivo))));
         buttonPanel.add(reloadButton);
     
+        // Botões para diferentes tipos de ordenação
         JButton insertionSortButton = new JButton("Insertion Sort");
         insertionSortButton.addActionListener(new SortButtonListener("insertion"));
         buttonPanel.add(insertionSortButton);
@@ -61,8 +66,9 @@ public class AppGUI extends JFrame {
         heapSortButton.addActionListener(new SortButtonListener("heap"));
         buttonPanel.add(heapSortButton);
     
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(buttonPanel, BorderLayout.SOUTH); // Adiciona painel de botões ao JFrame
     
+        // Painel para pesquisa e operações de banco de dados
         JPanel searchPanel = new JPanel(new BorderLayout());
     
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -74,7 +80,9 @@ public class AppGUI extends JFrame {
         leftPanel.add(searchField);
         leftPanel.add(searchButton);
     
-        JPanel saveCleanPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Painel para os botões de salvar e limpar
+        JPanel saveCleanPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        // Botão para salvar números no banco de dados
         ImageIcon disketteIcon = new ImageIcon("ProjetoA3//src//icons//diskette.png");
         Image img = disketteIcon.getImage();
         Image resizedImg = img.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -89,6 +97,7 @@ public class AppGUI extends JFrame {
         });
         saveCleanPanel.add(saveButton);
     
+        // Botão para limpar números do banco de dados
         ImageIcon cleanIcon = new ImageIcon("ProjetoA3//src//icons//trash.png");
         Image imgClean = cleanIcon.getImage();
         Image resizedImgClean = imgClean.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -105,16 +114,17 @@ public class AppGUI extends JFrame {
         saveCleanPanel.add(cleanButton);
     
         searchPanel.add(leftPanel, BorderLayout.WEST);
-        searchPanel.add(saveCleanPanel, BorderLayout.EAST); // Adiciona o painel com os botões de salvar e limpar à direita
+        searchPanel.add(saveCleanPanel, BorderLayout.EAST); // Adiciona painel de botões de salvar/limpar à direita
         searchPanel.add(searchResultLabel, BorderLayout.CENTER);
     
-        // Load the initial list of numbers
+        // Carrega a lista inicial de números
         updateTextArea(formatarNumeros(lerArquivo(nomeArquivo)));
     
-        // Adiciona o painel de pesquisa ao JFrame
+        // Adiciona painel de pesquisa ao JFrame
         add(searchPanel, BorderLayout.NORTH);
     }      
 
+    // Lê o arquivo e retorna uma lista de strings com os números
     private List<String> lerArquivo(String nomeArquivo) {
         List<String> numeros = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) {
@@ -130,6 +140,7 @@ public class AppGUI extends JFrame {
         return numeros;
     }
 
+    // Formata os números para exibição
     public List<String> formatarNumeros(List<String> numeros) {
         List<String> numerosFormatados = new ArrayList<>();
         int count = 1;
@@ -140,6 +151,7 @@ public class AppGUI extends JFrame {
         return numerosFormatados;
     }
 
+    // Atualiza o JTextArea com os números formatados
     private void updateTextArea(List<String> numeros) {
         textArea.setText(""); // Limpa o texto anterior
         StringBuilder sb = new StringBuilder();
@@ -149,27 +161,29 @@ public class AppGUI extends JFrame {
         textArea.setText(sb.toString());
     }
 
+    // Destaca e rola para a linha especificada
     private void highlightAndScrollToLine(JScrollPane scrollPane, int lineIndex) {
         try {
             int startOffset = textArea.getLineStartOffset(lineIndex);
             int endOffset = textArea.getLineEndOffset(lineIndex);
 
-            // Highlight the line
+            // Realça a linha
             textArea.getHighlighter().addHighlight(startOffset, endOffset, new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN));
 
-            // Scroll to the line
+            // Rola para a linha
             Rectangle2D viewRect = textArea.modelToView2D(startOffset);
             if (viewRect != null) {
                 scrollPane.getViewport().scrollRectToVisible(viewRect.getBounds());
             }
 
-            // Ensure the text area is updated
+            // Garante que a área de texto esteja atualizada
             textArea.setCaretPosition(startOffset);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    // Ouvinte para os botões de ordenação
     private class SortButtonListener implements ActionListener {
         private String sortType;
 
@@ -201,6 +215,7 @@ public class AppGUI extends JFrame {
         }
     }
 
+    // Ouvinte para o botão de pesquisa
     private class SearchButtonListener implements ActionListener {
         private JScrollPane scrollPane;
 
@@ -214,11 +229,11 @@ public class AppGUI extends JFrame {
             List<String> numeros = lerArquivo(nomeArquivo);
             int resultado = PesquisaBinaria.pesquisaBinaria(numeros, chave);
             if (resultado != -1) {
-                // Update the TextArea with formatted numbers
+                // Atualiza o JTextArea com os números formatados
                 List<String> numerosFormatados = formatarNumeros(numeros);
                 updateTextArea(numerosFormatados);
 
-                // Highlight and scroll to the found line
+                // Destaca e rola para a linha encontrada
                 highlightAndScrollToLine(scrollPane, resultado);
                 searchResultLabel.setText("Número encontrado.");
             } else {
@@ -227,11 +242,13 @@ public class AppGUI extends JFrame {
         }
     }
 
+    // Salva os números no banco de dados
     private void salvarNumerosNoBanco() {
         List<String> numeros = lerArquivo(nomeArquivo);
         dbConnection.salvarNumeros(numeros); 
     }
 
+    // Limpa os números do banco de dados
     private void limparNumerosDoBanco() {
         int opcao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja limpar todos os números do banco de dados?",
                 "Confirmar Limpeza", JOptionPane.YES_NO_OPTION);

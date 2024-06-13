@@ -8,76 +8,80 @@ import java.io.IOException;
 
 public class BoasVindasGUI extends JFrame {
 
-    private JTextField numberField;
-    private JLabel maxLabel;
-    private int maxLines;
-    private String nomeArquivo = "ProjetoA3//src//files//NumerosOrdenarArquivo.txt";
+    private JTextField numberField; // Campo de texto para inserção do número de linhas
+    private JLabel maxLabel; // Rótulo para exibir o número máximo de linhas no arquivo
+    private int maxLines; // Variável para armazenar o número máximo de linhas
+    private String nomeArquivo = "ProjetoA3//src//files//NumerosOrdenarArquivo.txt"; // Nome do arquivo a ser lido
 
     public BoasVindasGUI() {
-        setTitle("Bem-vindo");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setTitle("Bem-vindo"); // Define o título da janela
+        setSize(400, 200); // Define o tamanho da janela
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Define o comportamento ao fechar a janela
+        setLocationRelativeTo(null); // Centraliza a janela na tela
 
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout()); // Define o layout da janela como BorderLayout
 
-        JPanel welcomePanel = new JPanel();
-        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
+        JPanel welcomePanel = new JPanel(); // Cria um painel para o conteúdo inicial
+        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS)); // Define o layout do painel como BoxLayout vertical
 
-        JLabel welcomeLabel = new JLabel("Bem-vindo ao Organizador de Números!");
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        welcomeLabel.setFont(new Font("Serif", Font.BOLD, 18));
-        welcomePanel.add(welcomeLabel);
+        JLabel welcomeLabel = new JLabel("Bem-vindo ao Organizador de Números!"); // Cria um rótulo de boas-vindas
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Alinha o rótulo ao centro horizontalmente
+        welcomeLabel.setFont(new Font("Serif", Font.BOLD, 18)); // Define a fonte do rótulo
+        welcomePanel.add(welcomeLabel); // Adiciona o rótulo ao painel
 
-        JLabel instructionLabel = new JLabel("Selecione quantas linhas deseja ler do arquivo:");
-        instructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        welcomePanel.add(instructionLabel);
+        JLabel instructionLabel = new JLabel("Selecione quantas linhas deseja ler do arquivo:"); // Rótulo de instrução
+        instructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Alinha ao centro horizontalmente
+        welcomePanel.add(instructionLabel); // Adiciona ao painel
 
-        numberField = new JTextField(5);
-        numberField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        welcomePanel.add(numberField);
+        numberField = new JTextField(5); // Cria um campo de texto para inserir o número de linhas desejado
+        numberField.setAlignmentX(Component.CENTER_ALIGNMENT); // Alinha ao centro horizontalmente
+        welcomePanel.add(numberField); // Adiciona ao painel
 
-        maxLabel = new JLabel();
-        maxLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        welcomePanel.add(maxLabel);
+        maxLabel = new JLabel(); // Rótulo para exibir o número máximo de linhas
+        maxLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Alinha ao centro horizontalmente
+        welcomePanel.add(maxLabel); // Adiciona ao painel
 
-        JButton startButton = new JButton("Iniciar");
-        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        startButton.addActionListener(new StartButtonListener());
-        welcomePanel.add(startButton);
+        JButton startButton = new JButton("Iniciar"); // Botão "Iniciar"
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Alinha ao centro horizontalmente
+        startButton.addActionListener(new StartButtonListener()); // Adiciona um ouvinte de ação ao botão
+        welcomePanel.add(startButton); // Adiciona ao painel
 
-        add(welcomePanel, BorderLayout.CENTER);
-        maxLines = calcularMaxLinhas(nomeArquivo);
-        maxLabel.setText("Máximo de linhas disponíveis: " + maxLines);
+        add(welcomePanel, BorderLayout.CENTER); // Adiciona o painel ao centro da janela
+        maxLines = calcularMaxLinhas(nomeArquivo); // Calcula o número máximo de linhas no arquivo
+        maxLabel.setText("Máximo de linhas disponíveis: " + maxLines); // Define o texto do rótulo de número máximo de linhas
     }
 
+    // Método para calcular o número máximo de linhas no arquivo
     private int calcularMaxLinhas(String nomeArquivo) {
-        int count = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) {
-            while (br.readLine() != null) {
-                count++;
+        int count = 0; // Inicializa o contador de linhas
+        try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) { // Abre o arquivo para leitura
+            while (br.readLine() != null) { // Lê cada linha do arquivo
+                count++; // Incrementa o contador de linhas
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) { // Trata exceções de leitura de arquivo
+            e.printStackTrace(); // Imprime o rastreamento da pilha de erros
         }
-        return count;
+        return count; // Retorna o número total de linhas no arquivo
     }
 
+    // Classe interna para lidar com eventos do botão "Iniciar"
     private class StartButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                int numLinhas = Integer.parseInt(numberField.getText());
-                if (numLinhas > 0 && numLinhas <= maxLines) {
+                int numLinhas = Integer.parseInt(numberField.getText()); // Obtém o número de linhas digitado
+                if (numLinhas > 0 && numLinhas <= maxLines) { // Verifica se o número de linhas é válido
                     SwingUtilities.invokeLater(() -> {
-                        AppGUI app = new AppGUI(numLinhas);
-                        app.setVisible(true);
+                        AppGUI app = new AppGUI(numLinhas); // Cria uma nova instância de AppGUI com o número de linhas
+                        app.setVisible(true); // Torna a janela visível
                     });
-                    dispose();
+                    dispose(); // Fecha a janela atual (BoasVindasGUI)
                 } else {
+                    // Exibe uma mensagem de erro se o número de linhas não for válido
                     JOptionPane.showMessageDialog(BoasVindasGUI.this, "Por favor, insira um número válido entre 1 e " + maxLines, "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
+                // Exibe uma mensagem de erro se o valor inserido não for um número válido
                 JOptionPane.showMessageDialog(BoasVindasGUI.this, "Por favor, insira um número válido.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
