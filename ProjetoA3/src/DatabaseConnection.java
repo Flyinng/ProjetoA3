@@ -13,10 +13,7 @@ public class DatabaseConnection {
 
     public DatabaseConnection() {
         try {
-            // Carrega o driver JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Estabelece a conexão com o banco de dados
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             if (connection != null) {
                 System.out.println("Conexão estabelecida com sucesso!");
@@ -47,12 +44,10 @@ public class DatabaseConnection {
                 stmt.setString(1, numero);
                 stmt.executeUpdate();
             }
-
-            // Exibe uma mensagem de sucesso
             JOptionPane.showMessageDialog(null, "Números salvos com sucesso no banco de dados!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Imprime a pilha de erro no console
+            e.printStackTrace(); 
             String errorMessage = "Erro ao salvar números no banco de dados.\n" + e.getMessage();
             JOptionPane.showMessageDialog(null, errorMessage, "Erro", JOptionPane.ERROR_MESSAGE);
         }
