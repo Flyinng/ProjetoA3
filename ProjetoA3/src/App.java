@@ -1,5 +1,10 @@
+import javax.swing.SwingUtilities;
+
 public class App {
-    public static void main(String[] args) throws Exception {
-        System.out.println("Commit Inicial");
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            BoasVindasGUI boasVindasGUI = new BoasVindasGUI();
+            boasVindasGUI.setVisible(true);
+        });
     }
 }
