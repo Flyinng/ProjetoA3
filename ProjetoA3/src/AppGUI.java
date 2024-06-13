@@ -17,79 +17,103 @@ public class AppGUI extends JFrame {
     private JLabel searchResultLabel;
     private String nomeArquivo = "ProjetoA3//src//files//NumerosOrdenarArquivo.txt";
     private int numLinhas;
+    private DatabaseConnection dbConnection;
 
     public AppGUI(int numLinhas) {
         this.numLinhas = numLinhas;
+        this.dbConnection = new DatabaseConnection();
         
         setTitle("Ordenar Números");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
+    
         textArea = new JTextArea();
         textArea.setEditable(false);
-
+    
         JScrollPane scrollPane = new JScrollPane(textArea);
         add(scrollPane, BorderLayout.CENTER);
-
+    
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(2, 5));
-
+    
         JButton reloadButton = new JButton("Recarregar Lista");
-        reloadButton.addActionListener(e -> updateTextArea(lerArquivo(nomeArquivo)));
+        reloadButton.addActionListener(e -> updateTextArea(formatarNumeros(lerArquivo(nomeArquivo))));
         buttonPanel.add(reloadButton);
-
+    
         JButton insertionSortButton = new JButton("Insertion Sort");
         insertionSortButton.addActionListener(new SortButtonListener("insertion"));
         buttonPanel.add(insertionSortButton);
-
+    
         JButton selectionSortButton = new JButton("Selection Sort");
         selectionSortButton.addActionListener(new SortButtonListener("selection"));
         buttonPanel.add(selectionSortButton);
-
+    
         JButton mergeSortButton = new JButton("Merge Sort");
         mergeSortButton.addActionListener(new SortButtonListener("merge"));
         buttonPanel.add(mergeSortButton);
-
+    
         JButton quickSortButton = new JButton("Quick Sort");
         quickSortButton.addActionListener(new SortButtonListener("quick"));
         buttonPanel.add(quickSortButton);
-
+    
         JButton heapSortButton = new JButton("Heap Sort");
         heapSortButton.addActionListener(new SortButtonListener("heap"));
         buttonPanel.add(heapSortButton);
-
+    
         add(buttonPanel, BorderLayout.SOUTH);
-
+    
         JPanel searchPanel = new JPanel(new BorderLayout());
-
+    
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchField = new JTextField(15);
         JButton searchButton = new JButton("Pesquisar");
         searchResultLabel = new JLabel("");
-
+    
         searchButton.addActionListener(new SearchButtonListener(scrollPane));
         leftPanel.add(searchField);
         leftPanel.add(searchButton);
-
-        searchPanel.add(leftPanel, BorderLayout.WEST);
-        searchPanel.add(searchResultLabel, BorderLayout.CENTER);
-
-        // Load the icon and resize it for the save button
+    
+        JPanel saveCleanPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Painel para os botões de salvar e limpar
         ImageIcon disketteIcon = new ImageIcon("ProjetoA3//src//icons//diskette.png");
         Image img = disketteIcon.getImage();
         Image resizedImg = img.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         ImageIcon resizedDisketteIcon = new ImageIcon(resizedImg);
-
-        // Adding the save button with resized diskette icon to the right
+    
         JButton saveButton = new JButton(resizedDisketteIcon);
-        searchPanel.add(saveButton, BorderLayout.EAST);
-
-        add(searchPanel, BorderLayout.NORTH);
-
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                salvarNumerosNoBanco();
+            }
+        });
+        saveCleanPanel.add(saveButton);
+    
+        ImageIcon cleanIcon = new ImageIcon("ProjetoA3//src//icons//trash.png");
+        Image imgClean = cleanIcon.getImage();
+        Image resizedImgClean = imgClean.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        ImageIcon resizedCleanIcon = new ImageIcon(resizedImgClean);
+    
+        JButton cleanButton = new JButton(resizedCleanIcon);
+        cleanButton.setToolTipText("Limpar Banco de Dados");
+        cleanButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limparNumerosDoBanco();
+            }
+        });
+        saveCleanPanel.add(cleanButton);
+    
+        searchPanel.add(leftPanel, BorderLayout.WEST);
+        searchPanel.add(saveCleanPanel, BorderLayout.EAST); // Adiciona o painel com os botões de salvar e limpar à direita
+        searchPanel.add(searchResultLabel, BorderLayout.CENTER);
+    
         // Load the initial list of numbers
         updateTextArea(formatarNumeros(lerArquivo(nomeArquivo)));
-    }
+    
+        // Adiciona o painel de pesquisa ao JFrame
+        add(searchPanel, BorderLayout.NORTH);
+    }      
 
     private List<String> lerArquivo(String nomeArquivo) {
         List<String> numeros = new ArrayList<>();
@@ -202,4 +226,18 @@ public class AppGUI extends JFrame {
             }
         }
     }
+
+    private void salvarNumerosNoBanco() {
+        List<String> numeros = lerArquivo(nomeArquivo);
+        dbConnection.salvarNumeros(numeros); 
+    }
+
+    private void limparNumerosDoBanco() {
+        int opcao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja limpar todos os números do banco de dados?",
+                "Confirmar Limpeza", JOptionPane.YES_NO_OPTION);
+        if (opcao == JOptionPane.YES_OPTION) {
+            dbConnection.limparNumeros();
+            JOptionPane.showMessageDialog(null, "Números removidos do banco de dados com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }    
 }
