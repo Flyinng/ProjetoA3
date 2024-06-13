@@ -3,8 +3,8 @@ import javax.swing.SwingUtilities;
 public class App {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            AppGUI app = new AppGUI();
-            app.setVisible(true);
+            BoasVindasGUI boasVindasGUI = new BoasVindasGUI();
+            boasVindasGUI.setVisible(true);
         });
     }
 }
