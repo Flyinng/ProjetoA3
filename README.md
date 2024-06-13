@@ -255,4 +255,8 @@ CREATE TABLE IF NOT EXISTS numeros (id INT AUTO_INCREMENT PRIMARY KEY,numero VAR
 
 ---
 
+Para uma versão do projeto com comentários detalhados explicando cada parte do código, confira o diretório [src-comented](https://github.com/ViniciusReisch/ProjetoA3/tree/main/ProjetoA3/src-comented).
+
+---
+
 *Projeto desenvolvido na aula de Programação e Soluções Computacionais do curso Entra21 na Unisociesc - SC.* 📜
